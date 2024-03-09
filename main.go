@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -35,5 +37,28 @@ func FormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO save the data
+	err = saveData(data)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, fmt.Sprintf("error saving"), 500)
+	}
+
 	// TODO respond to the request Excercise for you
+
+}
+
+func saveData(data FormData) error {
+	file, err := os.OpenFile("data.json", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 644)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(data)
+	if err != nil {
+		log.Print(err.Error())
+		return err
+	}
+	return nil
 }
