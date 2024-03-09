@@ -14,5 +14,5 @@ func main() {
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello World"))
+	http.ServeFile(w, r, "./index.html")
 }
